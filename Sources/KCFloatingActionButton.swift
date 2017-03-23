@@ -16,6 +16,16 @@ public enum KCFABOpenAnimationType {
     case none
 }
 
+public enum KCFABOpenDirection {
+    case up
+    case down
+}
+
+public enum KCFABItemTitleSide {
+    case left
+    case right
+}
+
 /**
     Floating Action Button Object. It has `KCFloatingActionButtonItem` objects.
     KCFloatingActionButton support storyboard designable.
@@ -135,6 +145,8 @@ open class KCFloatingActionButton: UIView {
     open var closed: Bool = true
 
     open var openAnimationType: KCFABOpenAnimationType = .pop
+    
+    open var openDirection: KCFABOpenDirection = .up
 
     open var friendlyTap: Bool = true
     
@@ -745,12 +757,18 @@ extension KCFloatingActionButton {
         var delay = 0.0
         for item in items {
             if item.isHidden == true { continue }
-            itemHeight += item.size + itemSpace
+//            itemHeight += item.size + itemSpace
+            switch openDirection {
+            case .up:
+                    itemHeight -= item.size + itemSpace
+            case .down:
+                    itemHeight += item.size + itemSpace
+            }
             item.layer.transform = CATransform3DIdentity
             let big = size > item.size ? size : item.size
             let small = size <= item.size ? size : item.size
             item.frame.origin.x = big/2-small/2
-            item.frame.origin.y = -itemHeight
+            item.frame.origin.y = itemHeight
             item.layer.transform = CATransform3DMakeScale(0.4, 0.4, 1)
             UIView.animate(withDuration: 0.3, delay: delay,
                                        usingSpringWithDamping: 0.55,
@@ -784,8 +802,15 @@ extension KCFloatingActionButton {
         var delay = 0.0
         for item in items {
             if item.isHidden == true { continue }
-            itemHeight += item.size + itemSpace
-            item.frame.origin.y = -itemHeight
+//            itemHeight += item.size + itemSpace
+//            item.frame.origin.y = -itemHeight
+            switch openDirection {
+            case .up:
+                itemHeight -= item.size + itemSpace
+            case .down:
+                itemHeight += item.size + itemSpace
+            }
+            item.frame.origin.y = itemHeight
             UIView.animate(withDuration: 0.4,
                                        delay: delay,
                                        options: [],
@@ -819,9 +844,16 @@ extension KCFloatingActionButton {
         var delay = 0.0
         for item in items {
             if item.isHidden == true { continue }
-            itemHeight += item.size + itemSpace
+            
+//            itemHeight += item.size + itemSpace
+            switch openDirection {
+            case .up:
+                itemHeight -= item.size + itemSpace
+            case .down:
+                itemHeight += item.size + itemSpace
+            }
             item.frame.origin.x = UIScreen.main.bounds.size.width - frame.origin.x
-            item.frame.origin.y = -itemHeight
+            item.frame.origin.y = itemHeight
             UIView.animate(withDuration: 0.3, delay: delay,
                                        usingSpringWithDamping: 0.55,
                                        initialSpringVelocity: 0.3,
@@ -851,13 +883,31 @@ extension KCFloatingActionButton {
      */
     fileprivate func slideUpAnimationWithOpen() {
         var itemHeight: CGFloat = 0
+        var delay = 0.0
         for item in items {
             if item.isHidden == true { continue }
-            itemHeight += item.size + itemSpace
-            UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: { () -> Void in
-                                        item.frame.origin.y = -itemHeight
-                                        item.alpha = 1
-                }, completion: nil)
+            switch openDirection {
+            case .up:
+                itemHeight -= item.size + itemSpace
+            case .down:
+                itemHeight += item.size + itemSpace
+            }
+            item.frame.origin.x = frame.origin.x - UIScreen.main.bounds.size.width
+            item.frame.origin.y = itemHeight
+            UIView.animate(withDuration: 0.3, delay: delay,
+                           usingSpringWithDamping: 0.55,
+                           initialSpringVelocity: 0.3,
+                           options: UIViewAnimationOptions(), animations: { () -> Void in
+                            item.frame.origin.x = self.itemSize/2 - self.size/2
+                            item.alpha = 1
+            }, completion: nil)
+
+            delay += animationSpeed
+//            itemHeight += item.size + itemSpace
+//            UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: { () -> Void in
+//                                        item.frame.origin.y = -itemHeight
+//                                        item.alpha = 1
+//                }, completion: nil)
         }
     }
 
@@ -878,7 +928,13 @@ extension KCFloatingActionButton {
         var itemHeight: CGFloat = 0
         for item in items {
             if item.isHidden == true { continue }
-            itemHeight += item.size + itemSpace
+//            itemHeight += item.size + itemSpace
+            switch openDirection {
+            case .up:
+                itemHeight -= item.size + itemSpace
+            case .down:
+                itemHeight += item.size + itemSpace
+            }
             UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: { () -> Void in
                                         item.frame.origin.y = itemHeight
                                         item.alpha = 1
@@ -903,8 +959,15 @@ extension KCFloatingActionButton {
         var itemHeight: CGFloat = 0
         for item in items {
             if item.isHidden == true { continue }
-            itemHeight += item.size + itemSpace
-            item.frame.origin.y = -itemHeight
+//            itemHeight += item.size + itemSpace
+//            item.frame.origin.y = -itemHeight
+            switch openDirection {
+            case .up:
+                itemHeight -= item.size + itemSpace
+            case .down:
+                itemHeight += item.size + itemSpace
+            }
+            item.frame.origin.y = itemHeight
             item.alpha = 1
         }
     }
